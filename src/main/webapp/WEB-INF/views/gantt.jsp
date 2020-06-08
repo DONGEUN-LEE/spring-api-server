@@ -55,6 +55,9 @@ uri="http://java.sun.com/jsp/jstl/core"%>
               task.backgroundColor = "#FF0000";
             }
           });
+          eventBus.register("task-click", function (evt) {
+            console.log(evt.detail.task);
+          });
         }
         function onSearch() {
           var gantt = document.getElementById("gantt");
@@ -104,6 +107,21 @@ uri="http://java.sun.com/jsp/jstl/core"%>
         id="gantt"
         gantt-width-rate="-100"
       ></my-comp-gantt-chart>
+      <script>
+        var gantt = document.getElementById("gantt");
+        if (gantt) {
+          var styleObj = {
+            width: "1000px",
+            height: "800px",
+            border: "1px solid #d9d9d9",
+          };
+          gantt.setAttribute("style-obj", JSON.stringify(styleObj));
+          // gantt.setAttribute("grid-cell-padding", "10");
+          // gantt.setAttribute("row-height", "21");
+          // gantt.setAttribute("row-buffer", "50");
+          gantt.setAttribute("class-name", "gantt-main");
+        }
+      </script>
     </div>
   </body>
 </html>
