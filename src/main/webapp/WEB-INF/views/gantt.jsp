@@ -21,6 +21,12 @@ uri="http://java.sun.com/jsp/jstl/core"%>
       <button type="button" class="btn btn-primary" onclick="onSearch()">
         Search
       </button>
+      <button type="button" class="btn btn-primary" onclick="onZoomIn()">
+        +
+      </button>
+      <button type="button" class="btn btn-primary" onclick="onZoomOut()">
+        -
+      </button>
     </div>
     <div style="text-align: center;">
       <script>
@@ -33,25 +39,26 @@ uri="http://java.sun.com/jsp/jstl/core"%>
             evt.detail.endColumn = "endTime";
           });
 
-          // textFunc(plan)
-          // tooltipFunc(plan)
-          // backgroundColorFunc(plan, text)
-          // borderColorFunc(plan, backgroundColor)
-          eventBus.register("get-task-functions", function (evt) {
-            evt.detail.textFunc = function (plan) {
-              return plan.productId;
-            };
+          // task
+          //   text: string;
+          //   item: Plan;
+          //   startTime: Date;
+          //   endTime: Date;
+          //   level: number;
+          //   backgroundColor: string;
+          //   borderColor: string;
+          //   tooltip: string;
+          eventBus.register("set-task", function (evt) {
+            var task = evt.detail.task;
+            task.text = task.item.productId;
+            if (task.item.productId === "SETUP") {
+              task.backgroundColor = "#FF0000";
+            }
           });
         }
         function onSearch() {
           var gantt = document.getElementById("gantt");
           if (gantt) {
-            const columns = [];
-            columns.push({ field: "siteId", order: "asc" });
-            columns.push({ field: "stageId", order: "asc" });
-            columns.push({ field: "operId", order: "asc" });
-            columns.push({ field: "resourceId", order: "asc" });
-            gantt.setAttribute("columns", JSON.stringify(columns));
             const ganttHeaders = [
               { type: "Day", format: "YYYY-MM-DD" },
               { type: "Hour" },
@@ -62,6 +69,12 @@ uri="http://java.sun.com/jsp/jstl/core"%>
               type: "get",
               url: "/api/plan",
               success: function (data) {
+                const columns = [];
+                columns.push({ field: "siteId", order: "asc" });
+                columns.push({ field: "stageId", order: "asc" });
+                columns.push({ field: "operId", order: "asc" });
+                columns.push({ field: "resourceId", order: "asc" });
+                gantt.setAttribute("columns", JSON.stringify(columns));
                 gantt.setAttribute("plans", JSON.stringify(data));
               },
               error: function (xhr, textStatus, errorThrown) {
@@ -70,6 +83,20 @@ uri="http://java.sun.com/jsp/jstl/core"%>
                 console.log(errorThrown);
               },
             });
+          }
+        }
+        function onZoomIn() {
+          var gantt = document.getElementById("gantt");
+          if (gantt) {
+            var rate = Number(gantt.getAttribute("gantt-width-rate"));
+            gantt.setAttribute("gantt-width-rate", String(rate + 100));
+          }
+        }
+        function onZoomOut() {
+          var gantt = document.getElementById("gantt");
+          if (gantt) {
+            var rate = Number(gantt.getAttribute("gantt-width-rate"));
+            gantt.setAttribute("gantt-width-rate", String(rate - 100));
           }
         }
       </script>
