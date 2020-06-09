@@ -17,14 +17,14 @@ uri="http://java.sun.com/jsp/jstl/core"%>
     <title>Gantt Test Page</title>
   </head>
   <body>
-    <div style="height: 50px;">
-      <button type="button" class="btn btn-primary" onclick="onSearch()">
+    <div style="height: 50px; display: flex; align-items: center;">
+      <button type="button" style="margin-left: 30px;" onclick="onSearch()">
         Search
       </button>
-      <button type="button" class="btn btn-primary" onclick="onZoomIn()">
+      <button type="button" style="margin-left: 10px;" onclick="onZoomIn()">
         +
       </button>
-      <button type="button" class="btn btn-primary" onclick="onZoomOut()">
+      <button type="button" style="margin-left: 10px;" onclick="onZoomOut()">
         -
       </button>
     </div>
@@ -92,34 +92,34 @@ uri="http://java.sun.com/jsp/jstl/core"%>
           var gantt = document.getElementById("gantt");
           if (gantt) {
             var rate = Number(gantt.getAttribute("gantt-width-rate"));
-            gantt.setAttribute("gantt-width-rate", String(rate + 100));
+            gantt.setAttribute("gantt-width-rate", String(rate * 2));
           }
         }
         function onZoomOut() {
           var gantt = document.getElementById("gantt");
           if (gantt) {
             var rate = Number(gantt.getAttribute("gantt-width-rate"));
-            gantt.setAttribute("gantt-width-rate", String(rate - 100));
+            gantt.setAttribute("gantt-width-rate", String(rate / 2));
           }
         }
       </script>
       <my-comp-gantt-chart
         id="gantt"
-        gantt-width-rate="-100"
+        gantt-width-rate="0.01"
       ></my-comp-gantt-chart>
       <script>
         var gantt = document.getElementById("gantt");
         if (gantt) {
           var styleObj = {
-            width: "1000px",
-            height: "800px",
+            height: (window.innerHeight - 82) + "px",
             border: "1px solid #d9d9d9",
+            margin: "0px 30px",
           };
           gantt.setAttribute("style-obj", JSON.stringify(styleObj));
           // gantt.setAttribute("grid-cell-padding", "10");
           // gantt.setAttribute("row-height", "21");
           // gantt.setAttribute("row-buffer", "50");
-          gantt.setAttribute("class-name", "gantt-main");
+          // gantt.setAttribute("class-name", "gantt-main");
         }
       </script>
     </div>
