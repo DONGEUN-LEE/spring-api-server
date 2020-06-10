@@ -11,5 +11,4 @@ import lombok.NoArgsConstructor;
 public class ProductRouteVo {
   private String from;
   private String to;
-  private int seq;
 }

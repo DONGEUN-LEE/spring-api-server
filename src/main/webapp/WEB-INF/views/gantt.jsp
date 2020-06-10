@@ -56,7 +56,7 @@ uri="http://java.sun.com/jsp/jstl/core"%>
             }
           });
           eventBus.register("task-click", function (evt) {
-            console.log(evt.detail.task);
+            onShowProcessMap(evt.detail.task.item);
           });
         }
         function onSearch() {
@@ -102,16 +102,66 @@ uri="http://java.sun.com/jsp/jstl/core"%>
             gantt.setAttribute("gantt-width-rate", String(rate / 2));
           }
         }
+        function onShowProcessMap(plan) {
+          if (plan && plan.productId && plan.productId !== "SETUP") {
+            $.ajax({
+              type: "post",
+              url: "/api/route",
+              contentType: "application/json",
+              data: JSON.stringify({ productId: plan.productId }),
+              success: function (data) {
+                var procmap = document.getElementById("procmap");
+                if (procmap) {
+                  procmap.setAttribute("product-routes", JSON.stringify(data.productRoutes));
+                  procmap.setAttribute("step-routes", JSON.stringify(data.stepRoutes));
+                  var popup = document.getElementById("popup");
+                  if (popup) {
+                    popup.style.display = "block";
+                  }
+                }
+              },
+              error: function (xhr, textStatus, errorThrown) {
+                console.log(xhr);
+                console.log(textStatus);
+                console.log(errorThrown);
+              },
+            });
+          }
+        }
+        function onClose() {
+          var popup = document.getElementById("popup");
+          if (popup) {
+            popup.style.display = "none";
+          }
+        }
       </script>
       <factory-gantt-chart
         id="gantt"
         gantt-width-rate="0.01"
       ></factory-gantt-chart>
+      <div
+        id="popup"
+        style="
+          position: relative;
+          left: 0px;
+          top: 0px;
+          height: 100%;
+          background-color: #FFF;
+          border: 1px solid #999;
+          display: none;
+          text-align: center;
+          margin: 0px 100px;
+        "
+      >
+        <button style="position: absolute; right: 10px; top: 10px;" onclick="onClose()">X</button>
+        <factory-process-map id="procmap" width="1000" height="800">
+        </factory-process-map>
+      </div>
       <script>
         var gantt = document.getElementById("gantt");
         if (gantt) {
           var styleObj = {
-            height: (window.innerHeight - 82) + "px",
+            height: window.innerHeight - 82 + "px",
             border: "1px solid #d9d9d9",
             margin: "0px 30px",
           };

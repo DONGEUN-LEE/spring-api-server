@@ -12,5 +12,4 @@ public class StepRouteVo {
   private String from;
   private String to;
   private String product;
-  private int seq;
 }
