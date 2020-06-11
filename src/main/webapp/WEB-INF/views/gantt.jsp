@@ -15,6 +15,82 @@ uri="http://java.sun.com/jsp/jstl/core"%>
     <script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
     <!-- <script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script> -->
     <title>Gantt Test Page</title>
+    <style>
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        padding-top: 50px;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgb(0, 0, 0);
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+
+      .modal-content {
+        position: relative;
+        background-color: #fefefe;
+        margin: auto;
+        padding: 0;
+        border: 1px solid #888;
+        width: 80%;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
+          0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        -webkit-animation-name: animatetop;
+        -webkit-animation-duration: 0.4s;
+        animation-name: animatetop;
+        animation-duration: 0.4s;
+      }
+
+      @-webkit-keyframes animatetop {
+        from {
+          top: -300px;
+          opacity: 0;
+        }
+        to {
+          top: 0;
+          opacity: 1;
+        }
+      }
+
+      @keyframes animatetop {
+        from {
+          top: -300px;
+          opacity: 0;
+        }
+        to {
+          top: 0;
+          opacity: 1;
+        }
+      }
+
+      .close {
+        color: white;
+        float: right;
+        /* font-size: 28px; */
+        font-weight: bold;
+      }
+
+      .close:hover,
+      .close:focus {
+        color: #000;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .modal-header {
+        padding: 2px 16px;
+        background-color: #666;
+        color: white;
+      }
+
+      .modal-body {
+        padding: 2px 16px;
+      }
+    </style>
   </head>
   <body>
     <div style="height: 50px; display: flex; align-items: center;">
@@ -50,6 +126,7 @@ uri="http://java.sun.com/jsp/jstl/core"%>
           //   tooltip: string;
           eventBus.register("set-task", function (evt) {
             var task = evt.detail.task;
+            task.key = task.item.productId;
             task.text = task.item.productId;
             if (task.item.productId === "SETUP") {
               task.backgroundColor = "#FF0000";
@@ -112,12 +189,20 @@ uri="http://java.sun.com/jsp/jstl/core"%>
               success: function (data) {
                 var procmap = document.getElementById("procmap");
                 if (procmap) {
-                  procmap.setAttribute("product-routes", JSON.stringify(data.productRoutes));
-                  procmap.setAttribute("step-routes", JSON.stringify(data.stepRoutes));
-                  var popup = document.getElementById("popup");
+                  var popup = document.getElementById("modal");
                   if (popup) {
+                    var text = document.getElementById("header-text");
+                    text.innerText = plan.productId;
                     popup.style.display = "block";
                   }
+                  procmap.setAttribute(
+                    "product-routes",
+                    JSON.stringify(data.productRoutes),
+                  );
+                  procmap.setAttribute(
+                    "step-routes",
+                    JSON.stringify(data.stepRoutes),
+                  );
                 }
               },
               error: function (xhr, textStatus, errorThrown) {
@@ -129,33 +214,33 @@ uri="http://java.sun.com/jsp/jstl/core"%>
           }
         }
         function onClose() {
-          var popup = document.getElementById("popup");
+          var popup = document.getElementById("modal");
           if (popup) {
             popup.style.display = "none";
           }
         }
+        window.onclick = function (event) {
+          var popup = document.getElementById("modal");
+          if (event.target == popup) {
+            popup.style.display = "none";
+          }
+        };
       </script>
       <factory-gantt-chart
         id="gantt"
         gantt-width-rate="0.01"
       ></factory-gantt-chart>
-      <div
-        id="popup"
-        style="
-          position: relative;
-          left: 0px;
-          top: 0px;
-          height: 100%;
-          background-color: #FFF;
-          border: 1px solid #999;
-          display: none;
-          text-align: center;
-          margin: 0px 100px;
-        "
-      >
-        <button style="position: absolute; right: 10px; top: 10px;" onclick="onClose()">X</button>
-        <factory-process-map id="procmap" width="1000" height="800">
-        </factory-process-map>
+      <div id="modal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <span class="close" onclick="onClose()">&times;</span>
+            <h2 id="header-text"></h2>
+          </div>
+          <div class="modal-body">
+            <factory-process-map id="procmap" width="1000" height="800">
+            </factory-process-map>
+          </div>
+        </div>
       </div>
       <script>
         var gantt = document.getElementById("gantt");
