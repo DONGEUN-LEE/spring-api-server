@@ -15,7 +15,7 @@ uri="http://java.sun.com/jsp/jstl/core"%>
     <script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
     <!-- <script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script> -->
     <title>Gantt Test Page</title>
-    <style>
+    <!-- <style>
       .modal {
         display: none;
         position: fixed;
@@ -90,7 +90,7 @@ uri="http://java.sun.com/jsp/jstl/core"%>
       .modal-body {
         padding: 2px 16px;
       }
-    </style>
+    </style> -->
   </head>
   <body>
     <div style="height: 50px; display: flex; align-items: center;">
@@ -193,7 +193,8 @@ uri="http://java.sun.com/jsp/jstl/core"%>
                   if (popup) {
                     var text = document.getElementById("header-text");
                     text.innerText = plan.productId;
-                    popup.style.display = "block";
+                    // popup.style.display = "block";
+                    popup.setAttribute("show", "true");
                   }
                   procmap.setAttribute(
                     "product-routes",
@@ -213,24 +214,29 @@ uri="http://java.sun.com/jsp/jstl/core"%>
             });
           }
         }
-        function onClose() {
-          var popup = document.getElementById("modal");
-          if (popup) {
-            popup.style.display = "none";
-          }
-        }
-        window.onclick = function (event) {
-          var popup = document.getElementById("modal");
-          if (event.target == popup) {
-            popup.style.display = "none";
-          }
-        };
+        // function onClose() {
+        //   var popup = document.getElementById("modal");
+        //   if (popup) {
+        //     popup.style.display = "none";
+        //   }
+        // }
+        // window.onclick = function (event) {
+        //   var popup = document.getElementById("modal");
+        //   if (event.target == popup) {
+        //     popup.style.display = "none";
+        //   }
+        // };
       </script>
       <factory-gantt-chart
         id="gantt"
         gantt-width-rate="0.01"
       ></factory-gantt-chart>
-      <div id="modal" class="modal">
+      <factory-modal-dialog id="modal" show="false">
+        <h2 id="header-text" slot="title"></h2>
+        <factory-process-map id="procmap" width="1000" height="800" slot="body">
+        </factory-process-map>
+      </factory-modal-dialog>
+      <!-- <div id="modal" class="modal">
         <div class="modal-content">
           <div class="modal-header">
             <span class="close" onclick="onClose()">&times;</span>
@@ -241,7 +247,7 @@ uri="http://java.sun.com/jsp/jstl/core"%>
             </factory-process-map>
           </div>
         </div>
-      </div>
+      </div> -->
       <script>
         var gantt = document.getElementById("gantt");
         if (gantt) {
