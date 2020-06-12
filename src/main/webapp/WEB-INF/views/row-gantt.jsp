@@ -172,7 +172,7 @@ uri="http://java.sun.com/jsp/jstl/core"%>
 
             $.ajax({
               type: "get",
-              url: "/api/plan",
+              url: "/api/plan/row",
               success: function (data) {
                 var columns = [];
                 columns.push({ field: "siteId", order: "asc" });
@@ -180,7 +180,7 @@ uri="http://java.sun.com/jsp/jstl/core"%>
                 columns.push({ field: "operId", order: "asc" });
                 columns.push({ field: "resourceId", order: "asc" });
                 gantt.setAttribute("columns", JSON.stringify(columns));
-                gantt.setAttribute("plans", JSON.stringify(data));
+                gantt.setAttribute("rows", JSON.stringify(data));
               },
               error: function (xhr, textStatus, errorThrown) {
                 console.log(xhr);
@@ -252,10 +252,10 @@ uri="http://java.sun.com/jsp/jstl/core"%>
           }
         };
       </script>
-      <factory-gantt-chart
+      <factory-row-gantt-chart
         id="gantt"
         gantt-width-rate="0.01"
-      ></factory-gantt-chart>
+      ></factory-row-gantt-chart>
       <div id="modal" class="modal">
         <div class="modal-content">
           <div class="modal-header">

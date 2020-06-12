@@ -41,4 +41,11 @@ public class HelloWorldController {
     mav.addObject("name", "Gantt Test");
     return mav;
   }
+
+  @RequestMapping("/row-gantt")
+  public ModelAndView rowGantt() throws Exception {
+    ModelAndView mav = new ModelAndView("row-gantt");
+    mav.addObject("name", "Row Gantt Test");
+    return mav;
+  }
 }
