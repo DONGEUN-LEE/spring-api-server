@@ -6,14 +6,14 @@ uri="http://java.sun.com/jsp/jstl/core"%>
   <head>
     <meta charset="utf-8" />
     <link rel="stylesheet" href="/resources/css/factory.css" />
-    <!-- <link
+    <link
       rel="stylesheet"
       href="/webjars/bootstrap/4.5.0/css/bootstrap.min.css"
-    /> -->
+    />
     <script src="https://unpkg.com/@webcomponents/webcomponentsjs@2.4.3/custom-elements-es5-adapter.js"></script>
     <script src="/resources/js/factory.js"></script>
     <script src="/webjars/jquery/3.5.1/jquery.min.js"></script>
-    <!-- <script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script> -->
+    <script src="/webjars/bootstrap/4.5.0/js/bootstrap.min.js"></script>
     <title>Gantt Test Page</title>
     <style>
       .modal {
@@ -27,6 +27,7 @@ uri="http://java.sun.com/jsp/jstl/core"%>
         overflow: auto;
         background-color: rgb(0, 0, 0);
         background-color: rgba(0, 0, 0, 0.4);
+        z-index: 1;
       }
 
       .modal-content {
@@ -69,7 +70,6 @@ uri="http://java.sun.com/jsp/jstl/core"%>
       .close {
         color: white;
         float: right;
-        /* font-size: 28px; */
         font-weight: bold;
       }
 
@@ -84,6 +84,7 @@ uri="http://java.sun.com/jsp/jstl/core"%>
         padding: 2px 16px;
         background-color: #666;
         color: white;
+        display: block;
       }
 
       .modal-body {
@@ -93,13 +94,34 @@ uri="http://java.sun.com/jsp/jstl/core"%>
   </head>
   <body>
     <div style="height: 50px; display: flex; align-items: center;">
-      <button type="button" style="margin-left: 30px;" onclick="onSearch()">
+      <button
+        type="button"
+        class="btn btn-primary"
+        style="margin-left: 30px;"
+        onclick="onSearch()"
+      >
+        <span
+          class="spinner-border spinner-border-sm"
+          style="display: none;"
+          role="status"
+          aria-hidden="true"
+        ></span>
         Search
       </button>
-      <button type="button" style="margin-left: 10px;" onclick="onZoomIn()">
+      <button
+        type="button"
+        class="btn btn-primary"
+        style="margin-left: 10px;"
+        onclick="onZoomIn()"
+      >
         +
       </button>
-      <button type="button" style="margin-left: 10px;" onclick="onZoomOut()">
+      <button
+        type="button"
+        class="btn btn-primary"
+        style="margin-left: 10px;"
+        onclick="onZoomOut()"
+      >
         -
       </button>
     </div>
@@ -136,6 +158,10 @@ uri="http://java.sun.com/jsp/jstl/core"%>
           });
         }
         function onSearch() {
+          var spinners = document.getElementsByClassName("spinner-border");
+          spinners.forEach(function (spinner) {
+            spinner.style.display = "inline-block";
+          });
           var gantt = document.getElementById("gantt");
           if (gantt) {
             const ganttHeaders = [
@@ -160,6 +186,11 @@ uri="http://java.sun.com/jsp/jstl/core"%>
                 console.log(xhr);
                 console.log(textStatus);
                 console.log(errorThrown);
+              },
+              complete: function () {
+                spinners.forEach(function (spinner) {
+                  spinner.style.display = "none";
+                });
               },
             });
           }
@@ -233,7 +264,7 @@ uri="http://java.sun.com/jsp/jstl/core"%>
         <div class="modal-content">
           <div class="modal-header">
             <span class="close" onclick="onClose()">&times;</span>
-            <h2 id="header-text"></h2>
+            <span id="header-text"></span>
           </div>
           <div class="modal-body">
             <factory-process-map id="procmap" width="1000" height="800">
