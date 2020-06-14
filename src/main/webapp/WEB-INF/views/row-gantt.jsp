@@ -124,6 +124,13 @@ uri="http://java.sun.com/jsp/jstl/core"%>
       >
         -
       </button>
+      <label for="sel1" style="margin-left: 10px;">보기</label>
+      <select
+        id="gantt-view"
+        class="form-control"
+        style="margin-left: 5px; width: 150px;"
+      >
+      </select>
     </div>
     <div style="text-align: center;">
       <script>
@@ -157,6 +164,27 @@ uri="http://java.sun.com/jsp/jstl/core"%>
             onShowProcessMap(evt.detail.task.item);
           });
         }
+        var ganttView = document.getElementById("gantt-view");
+        if (ganttView) {
+          var viewByHour = [
+            { type: "Day", format: "YYYY-MM-DD" },
+            { type: "Hour" },
+          ];
+          var viewByDay = [
+            { type: "Year" },
+            { type: "Month" },
+            { type: "Day" },
+          ];
+          // ganttView.push
+          var option1 = document.createElement("option");
+          var option2 = document.createElement("option");
+          option1.value = JSON.stringify(viewByHour);
+          option1.text = "시간별";
+          option2.value = JSON.stringify(viewByDay);
+          option2.text = "일별";
+          ganttView.add(option1);
+          ganttView.add(option2);
+        }
         function onSearch() {
           var spinners = document.getElementsByClassName("spinner-border");
           for (var i = 0; i < spinners.length; i++) {
@@ -164,11 +192,11 @@ uri="http://java.sun.com/jsp/jstl/core"%>
           }
           var gantt = document.getElementById("gantt");
           if (gantt) {
-            var ganttHeaders = [
-              { type: "Day", format: "YYYY-MM-DD" },
-              { type: "Hour" },
-            ];
-            gantt.setAttribute("gantt-headers", JSON.stringify(ganttHeaders));
+            var ganttView = document.getElementById("gantt-view");
+            gantt.setAttribute(
+              "gantt-headers",
+              ganttView.options[ganttView.selectedIndex].value
+            );
 
             $.ajax({
               type: "get",
@@ -259,7 +287,7 @@ uri="http://java.sun.com/jsp/jstl/core"%>
       <div id="modal" class="modal">
         <div class="modal-content">
           <div class="modal-header">
-            <span class="close" onclick="onClose()">&times;</span>
+            <span class="close" onclick="onClose()">&#10799;</span>
             <span id="header-text"></span>
           </div>
           <div class="modal-body">
@@ -280,6 +308,8 @@ uri="http://java.sun.com/jsp/jstl/core"%>
           // gantt.setAttribute("grid-cell-padding", "10");
           // gantt.setAttribute("row-height", "21");
           // gantt.setAttribute("row-buffer", "50");
+          // gantt.setAttribute("loading-delay", "2000");
+          gantt.setAttribute("split-loading", "true");
           // gantt.setAttribute("class-name", "gantt-main");
         }
       </script>

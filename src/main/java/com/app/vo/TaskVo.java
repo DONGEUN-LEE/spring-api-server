@@ -16,7 +16,4 @@ public class TaskVo {
   private LocalDateTime startTime;
   private LocalDateTime endTime;
   private int level;
-  private String backgroundColor;
-  private String borderColor;
-  private String tooltip;
 }
