@@ -124,13 +124,18 @@ uri="http://java.sun.com/jsp/jstl/core"%>
       >
         -
       </button>
-      <label for="sel1" style="margin-left: 10px;">보기</label>
+      <label for="steps" style="margin-left: 10px;">공정</label>
+      <select id="steps" class="form-control" style="margin-left: 5px; width: 100px;">
+      </select>
+      <label for="gantt-view" style="margin-left: 10px;">보기</label>
       <select
         id="gantt-view"
         class="form-control"
         style="margin-left: 5px; width: 150px;"
       >
       </select>
+      <label class="form-check-label" for="chk-empty" style="margin-left: 10px;">빈 공간 숨기기</label>
+      <input type="checkbox" id="chk-empty" style="margin-left: 10px;" />
     </div>
     <div style="text-align: center;">
       <script>
@@ -157,6 +162,7 @@ uri="http://java.sun.com/jsp/jstl/core"%>
         // loading-delay      // 값이 있을 경우 Row Delayed Load 모드 On, Delay할 시간 결정 (ms) (Number)
         // split-loading      // 값이 true일 경우 Split Loading 모드 On, Task를 화면에 보일 때만 로딩 (Boolean)
         // gantt-width-rate   // Gantt Chart의 넓이 비율 (기본값: 1초 == 1px) (Number)
+        // without-empty-space // 빈 공간을 숨길 지 여부 결정 (기본값: false) (Boolean)
         // class-name         // Gantt Chart 클래스 명 (String)
         // style-obj          // Gantt Chart Style Object (Object)
         //   ex) 아래처럼 object 생성 후 JSON.stringify()로 변환하여 입력
@@ -346,6 +352,26 @@ uri="http://java.sun.com/jsp/jstl/core"%>
           ganttView.add(option1);
           ganttView.add(option2);
         }
+        var steps = document.getElementById("steps");
+        if (steps) {
+          $.ajax({
+            type: "get",
+            url: "/api/plan/step",
+            success: function (data) {
+              data.map(d => {
+                var option = document.createElement("option");
+                option.text = d;
+                option.value = d;
+                steps.add(option);
+              });
+            },
+            error: function (xhr, textStatus, errorThrown) {
+              console.log(xhr);
+              console.log(textStatus);
+              console.log(errorThrown);
+            },
+          });
+        }
         function onSearch() {
           var spinners = document.getElementsByClassName("spinner-border");
           for (var i = 0; i < spinners.length; i++) {
@@ -356,12 +382,21 @@ uri="http://java.sun.com/jsp/jstl/core"%>
             var ganttView = document.getElementById("gantt-view");
             gantt.setAttribute(
               "gantt-headers",
-              ganttView.options[ganttView.selectedIndex].value,
+              ganttView.options[ganttView.selectedIndex].value
             );
 
+            var emptySpace = document.getElementById("chk-empty");
+            if (emptySpace) {
+              gantt.setAttribute("without-empty-space", emptySpace.checked);
+            }
+
+            var steps = document.getElementById("steps");
+
             $.ajax({
-              type: "get",
+              type: "post",
               url: "/api/plan/row",
+              contentType: "application/json",
+              data: JSON.stringify({ step: steps.options[steps.selectedIndex].value }),
               success: function (data) {
                 var columns = [];
                 columns.push({ field: "siteId", order: "asc" });
@@ -471,6 +506,7 @@ uri="http://java.sun.com/jsp/jstl/core"%>
           // gantt.setAttribute("row-buffer", "50");
           // gantt.setAttribute("loading-delay", "2000");
           gantt.setAttribute("split-loading", "true");
+          // gantt.setAttribute("without-empty-space", "true");
           // gantt.setAttribute("class-name", "gantt-main");
         }
       </script>

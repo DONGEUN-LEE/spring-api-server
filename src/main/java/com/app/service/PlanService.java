@@ -30,12 +30,23 @@ public class PlanService {
     return PlanService.plans;
   }
 
-  public List<RowVo> findRows() {
+  public List<String> findSteps() {
+    List<String> steps = new ArrayList<String>();
+    steps.add("All");
+    if (PlanService.plans == null) {
+      PlanService.plans = planRepository.findAll();
+    }
+    steps.addAll(
+        plans.stream().map(plan -> plan.getOperId()).distinct().collect(Collectors.toList()));
+    return steps;
+  }
+
+  public List<RowVo> findRows(String step) {
     List<RowVo> rows = new ArrayList<RowVo>();
     if (PlanService.plans == null) {
       PlanService.plans = planRepository.findAll();
     }
-    TreeMap<RowVo, List<PlanVo>> collect = GroupByPlan(PlanService.plans);
+    TreeMap<RowVo, List<PlanVo>> collect = GroupByPlan(PlanService.plans, step);
     collect.forEach((key, value) -> {
       List<TaskVo> tasks = value.stream().map(plan -> {
         TaskVo task = new TaskVo();
@@ -81,15 +92,17 @@ public class PlanService {
     return rows;
   }
 
-  private TreeMap<RowVo, List<PlanVo>> GroupByPlan(List<PlanVo> plans) {
-    TreeMap<RowVo, List<PlanVo>> collect = plans.stream().collect(groupingBy(plan -> {
-      RowVo key = new RowVo();
-      key.setSiteId(plan.getSiteId());
-      key.setOperId(plan.getOperId());
-      key.setStageId(plan.getStageId());
-      key.setResourceId(plan.getResourceId());
-      return key;
-    }, TreeMap::new, Collectors.toList()));
+  private TreeMap<RowVo, List<PlanVo>> GroupByPlan(List<PlanVo> plans, String step) {
+    TreeMap<RowVo, List<PlanVo>> collect =
+        plans.stream().filter(plan -> step.equals("All") ? true : plan.getOperId().equals(step))
+            .collect(groupingBy(plan -> {
+              RowVo key = new RowVo();
+              key.setSiteId(plan.getSiteId());
+              key.setOperId(plan.getOperId());
+              key.setStageId(plan.getStageId());
+              key.setResourceId(plan.getResourceId());
+              return key;
+            }, TreeMap::new, Collectors.toList()));
     return collect;
   }
 
