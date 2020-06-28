@@ -202,6 +202,7 @@ uri="http://java.sun.com/jsp/jstl/core"%>
         // loading-delay      // 값이 있을 경우 Row Delayed Load 모드 On, Delay할 시간 결정 (ms) (Number)
         // split-loading      // 값이 true일 경우 Split Loading 모드 On, Task를 화면에 보일 때만 로딩 (Boolean)
         // gantt-width-rate   // Gantt Chart의 넓이 비율 (기본값: 1초 == 1px) (Number)
+        // without-empty-space // 빈 공간을 숨길 지 여부 결정 (기본값: false) (Boolean)
         // class-name         // Gantt Chart 클래스 명 (String)
         // style-obj          // Gantt Chart Style Object (Object)
         //   ex) 아래처럼 object 생성 후 JSON.stringify()로 변환하여 입력
